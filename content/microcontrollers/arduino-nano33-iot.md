@@ -46,13 +46,39 @@ make
 
 Once you have installed the needed BOSSA command line utility, as in the previous section, you are ready to build and flash code to your Arduino Nano33 IoT board.
 
+## Example code
+
+Here is a basic example showing how to get the board's LED to blink.
+
+```go
+package main
+
+import (
+	"machine"
+	"time"
+)
+
+func main() {
+	led := machine.LED
+	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
+
+	for {
+		led.Low()
+		time.Sleep(time.Millisecond * 500)
+
+		led.High()
+		time.Sleep(time.Millisecond * 500)
+	}
+}
+```
+
 ### CLI Flashing on Linux
 
 - Plug your Arduino Nano33 IoT board into your computer's USB port.
-- Build and flash your TinyGo code using the `tinygo flash` command. This command flashes the Arduino Nano33 IoT with the blinky1 example:
+- Build and flash your TinyGo code using the `tinygo flash` command. This command flashes the Arduino Nano33 IoT with the example code we have above (it assumes you are running the command from the folder containing the above code):
 
     ```
-    tinygo flash -target=arduino-nano33 examples/blinky1
+    tinygo flash -target=arduino-nano33 .
     ```
 
 - The Arduino Nano33 IoT board should restart and then begin running your program.
@@ -71,17 +97,23 @@ In order to talk to flash the board using macOS, you need to discover how macOS 
     The above command should result in output like this:
 
     ```shell
-    /dev/cu.usbmodem141201
-    /dev/tty.usbmodem141201
+    cu.usbmodem141201
+    tty.usbmodem141201
     ```
 
 - Using this information, you should now be able to flash your TinyGo program to the board using this command:
 
     ```shell
-    tinygo flash -target=arduino-nano33 -port=[PORT TO YOUR BOARD] [PATH TO YOUR PROGRAM]
+    tinygo flash -target=arduino-nano33 -port=/dev/[PORT TO YOUR BOARD] [PATH TO YOUR PROGRAM]
     ```
 
     Replace `[PORT TO YOUR BOARD]` in the command above with the correct USB port name for your board.
+    
+    For instance:
+    
+    ```shell
+    tinygo flash -target=arduino-nano33 -port=/dev/tty.usbmodem14301 .
+    ```
 
 - The Arduino Nano33 IoT board should restart and then begin running your program.
 
